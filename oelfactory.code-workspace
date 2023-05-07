@@ -1,0 +1,11 @@
+{
+  "folders": [
+    {
+      "path": "tree-sitter-oel"
+    },
+    {
+      "path": "tower-lsp-oel"
+    }
+  ],
+  "settings": {}
+}

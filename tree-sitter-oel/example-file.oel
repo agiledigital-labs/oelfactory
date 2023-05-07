@@ -1,0 +1,3 @@
+!(user.secondEmail == null OR user.secondEmail == "" ? {
+user.secondEmail
+} : "ABC"

@@ -7,6 +7,7 @@ module.exports = grammar({
     [
       "member",
       "call",
+      "unary_void",
       "binary_concat",
       "binary_relation",
       "binary_equality",
@@ -40,7 +41,12 @@ module.exports = grammar({
       ),
 
     expression: ($) =>
-      choice($.primary_expression, $.binary_expression, $.ternary_expression),
+      choice(
+        $.primary_expression,
+        $.unary_expression,
+        $.binary_expression,
+        $.ternary_expression
+      ),
 
     primary_expression: ($) =>
       choice(
@@ -52,6 +58,12 @@ module.exports = grammar({
         $.array,
         $.call_expression
         // TODO: other kinds of expressions
+      ),
+
+    unary_expression: ($) =>
+      prec.left(
+        "unary_void",
+        seq(field("operator", "!"), field("argument", $.expression))
       ),
 
     binary_expression: ($) =>
@@ -66,7 +78,6 @@ module.exports = grammar({
           ["!=", "binary_equality"],
           [">=", "binary_relation"],
           [">", "binary_relation"],
-          ["??", "ternary"],
         ].map(([operator, precedence, associativity]) =>
           (associativity === "right" ? prec.right : prec.left)(
             precedence,
@@ -119,7 +130,9 @@ module.exports = grammar({
     integer: ($) => /\d+/,
     // TODO: Should we use the proper IEEE spec here?
     float: ($) => /\d+\.\d+/,
-    boolean: ($) => choice("true", "false"),
+    boolean: ($) => choice($.true, $.false),
+    true: ($) => "true",
+    false: ($) => "false",
     null: ($) => "null",
     array: ($) => seq("{", commaSep($.expression), "}"),
 
